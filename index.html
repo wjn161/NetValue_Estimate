@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-CN">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NetValue_Estimate</title>
+    <link rel="stylesheet" href="js/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a href="./" class="navbar-brand">NetValue_Estimate</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="http://wujn.me" target="_blank">Create by Wujn</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 margin-top"></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="control-panel-title">
+                控制面板
+            </div>
+            <div class="control-panel">
+                <div class="control-panel-content">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtFundCode" autocomplete="off" placeholder="代码/名称/拼音">
+                            </div>
+                        </div>
+                        <button type="button" id="btnAdd" class="btn btn-primary" style="margin-left:20px; width:80px">添加</button>
+                        <button type="button" class="btn btn-success" style="margin-left:20px;" id="btnRefresh">刷新数据</button>
+                        <div class="form-group" style="margin-left: 50px">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="txtUser" autocomplete="off" placeholder="UserName"/>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-warning" style="margin-left:20px;">从数米账号加载基金</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="main-content">
+                <table id="table-estimate" class="table table-bordered table-hover table-responsive">
+                    <caption>估算时间 2015-01-01 22:12:22</caption>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>基金</th>
+                        <th>数米</th>
+                        <th>天天</th>
+                        <th>和讯</th>
+                        <th>新浪</th>
+                        <th>同花顺</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="8" class="align-left">您还没有添加基金信息!</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table id="table-netvalue" class="table table-bordered table-hover  table-responsive">
+                    <caption>净值日期 2015-01-01</caption>
+                    <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>基金</th>
+                        <th>数米</th>
+                        <th>天天</th>
+                        <th>和讯</th>
+                        <th>新浪</th>
+                        <th>同花顺</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>宝盈核心混合A(213006)</td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><span>1.1421(1.31%)</span></td>
+                        <td><a href="javascript:;">删除</a></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td colspan="8" class="align-left">您还没有添加基金信息!</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 margin-top100">
+            <div class="footer">
+                <p> Create by <a target="_blank" href="mailto:wujn@fund213.cn">wujn</a> Copyright © 2007-2015 Fund123.cn
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="//misc.shumiimg.com/??shumijs/src/global/base.js,shumijs/src/tools/seajs-combo/1.0.1/seajs-combo.js"></script>
+<script src="js/bootstrap/bootstrap.min.js"></script>
+<script src="http://market.fund123.cn/content/js/searchdata.js"></script>
+<script>
+    seajs.config({
+        alias: {
+        'cookie/1.0.0/cookie': '//misc.shumiimg.com//shumijs/src/tools/cookie/1.0.0/cookie.js',
+        'in/0.2.0/in': '//misc.shumiimg.com//shumijs/src/tools/in/0.2.0/in.js',
+        "dialog/6.0.4/dialog": "//misc.shumiimg.com//shumijs/src/ui/dialog/6.0.4/dialog.js",
+        "fundpicker/1.0.0/fundpicker": "//misc.shumiimg.com//shumijs/src/ui/fundpicker/1.0.0/fundpicker.js"
+        },
+        map: [
+            ['.js', '.js?20150101194806']
+        ]
+    });
+    seajs.config({
+        alias:{
+          "main":"./js/index.js"
+        }
+    })
+    seajs.use("main",function(main){
+        main.init();
+    });
+</script>
+</body>
+</html>
