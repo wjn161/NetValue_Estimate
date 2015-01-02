@@ -1,66 +1,129 @@
-define("datasource", function () {
-    function format() {
-        if (arguments.length == 0)
-            return null;
-        var str = arguments[0];
-        for (var i = 1; i < arguments.length; i++) {
-            var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
-            str = str.replace(re, arguments[i]);
-        }
-        return str;
-    }
+define("viewEngine", function () {
+    var viewEngine = function () {
+        this.update = function (table, data) {
+            if (data) {
+                var td;
+                if (data.value && data.percent) {
+                    if (Number(data.percent.replace("%", "")) > 0) {
+                        td = "<td data-key='" + data.key + "'><span style='color: red'>" + data.value + "(" + data.percent + ")</span></td>";
+                    } else if (Number(data.percent.replace("%", "")) < 0) {
+                        td = "<td data-key='" + data.key + "'><span style='color: green'>" + data.value + "(" + data.percent + ")</span></td>";
+                    } else {
+                        td = "<td data-key='" + data.key + "'><span>" + data.value + "(" + data.percent + ")</span></td>";
+                    }
+                } else {
+                    td = "<td data-key='" + data.key + "'><span>--</span></td>";
+                }
 
-    var estimateModel = function () {
-        this.fundCode = "";
-        this.fundName = "";
-        this.estimateTime = "";
-        this.estimateValue = "";
-        this.estimatePercent = "";
+                var oldtd = $(table).find("tbody tr[fundcode='" + data.fundCode + "']").find("td[data-key='" + data.key + "']");
+                oldtd.replaceWith(td);
+            }
+        };
+        this.updateAll = function () {
+
+        };
+        this.buildAll = function () {
+
+        }
     };
-    var datasource = function () {
-        this.keys=["eastmoney","fund123","hexun","ifund","sina"];
-        this.netValueUrls = {
+    return new viewEngine();
+});
+define("datasource", function (require) {
+    var ve = require("viewEngine");
+    var format = function () {
+            if (arguments.length == 0)
+                return null;
+            var str = arguments[0];
+            for (var i = 1; i < arguments.length; i++) {
+                var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+                str = str.replace(re, arguments[i]);
+            }
+            return str;
+        }, keys = ["fund123", "eastmoney", "ifund", "sina"],
+        netValueUrls = {
             eastmoney: "",
             fund123: "",
-            hexun: "",
             ifund: "",
             sina: ""
-        };
-        this.estimateUrls = {
-            eastmoney: "",
+        }
+        , estimateUrls = {
+            eastmoney: "http://fund.eastmoney.com/data/funddataforgznew.aspx?t=basewap&fc={0}&cb=?",
             fund123: "http://hqqd.fund123.cn/HQ_EV_{0}.js",
-            hexun: "",
             ifund: "",
-            sina: ""
+            sina: "http://hq.sinajs.cn/?t=" + new Date().getTime() + "&list=fu_{0}"
         };
-        this.estimateParser = {
-            eastmoney: function () {
+    var datasource = function () {
 
-            },
-            fund123: function (fundcode) {
-                var url = format(estimateUrls["fund123"], fundcode);
-                $.getScript(url, function () {
-                    var data = window["HQ_EV_" + fundcode];
-                    if (data.length) {
-                        var model = new estimateModel();
-                        model.fundCode = data[0];
-                        model.fundName = data[1];
-                        model.estimateTime = data[2];
-                        model.estimateValue = data[5];
-                        model.estimatePercent = data[6];
-                        return model;
+        this.estimateParser = {
+            eastmoney: function (fundcode, fundname, update) {
+                var url = format(estimateUrls["eastmoney"], fundcode);
+                $.ajax({
+                    url: url,
+                    dataType: "jsonp",
+                    type: "GET",
+                    cache: false,
+                    success: function (e) {
+                        if (e) {
+                            var estimate = {};
+                            estimate.key = "eastmoney";
+                            estimate.fundCode = fundcode;
+                            estimate.fundName = fundname;
+                            estimate.value = e.gsz;
+                            estimate.percent = e.gszzl + "%";
+                            estimate.time = e.gztime;
+                            update($("#table-estimate"), estimate);
+                        }
                     }
-                    return null;
                 });
             },
-            hexun: function () {
+            fund123: function (fundcode, fundname, update) {
+                var url = format(estimateUrls["fund123"], fundcode);
+                $.ajax({
+                    url: url,
+                    dataType: "script",
+                    type: "GET",
+                    cache: false,
+                    success: function () {
+                        var data = window["HQ_EV_" + fundcode];
+                        if (data.length) {
+                            var estimate = {};
+                            estimate.key = "fund123";
+                            estimate.fundCode = fundcode;
+                            estimate.fundName = fundname;
+                            estimate.value = data[5];
+                            estimate.percent = data[6];
+                            estimate.time = data[2];
+                            update($("#table-estimate"), estimate);
+                        }
+                    }
 
+                });
             },
             ifund: function () {
 
             },
-            sina: function () {
-
+            sina: function (fundcode, fundname, update) {
+                var url = format(estimateUrls["sina"], fundcode);
+                $.ajax({
+                    url: url,
+                    dataType: "script",
+                    type: "GET",
+                    cache: true,
+                    success: function () {
+                        var str = window["hq_str_fu_" + fundcode];
+                        var data = str.split(",");
+                        if (data.length) {
+                            var estimate = {};
+                            estimate.key = "sina";
+                            estimate.fundCode = fundcode;
+                            estimate.fundName = fundname;
+                            estimate.value = data[2];
+                            estimate.percent = Number(data[6]).toFixed(2) + "%";
+                            estimate.time = data[7] + " " + data[1];
+                            update($("#table-estimate"), estimate);
+                        }
+                    }
+                });
             }
         };
         this.netValueParser = {
@@ -68,9 +131,6 @@ define("datasource", function () {
 
             },
             fund123: function () {
-
-            },
-            hexun: function () {
 
             },
             ifund: function () {
@@ -83,26 +143,81 @@ define("datasource", function () {
         this.getNetValue = function (fundcode, fundname) {
 
         };
+        this.getEstimateList=function(array){
+            var data=[];
+           $(window.fundArray).each(function(k,v){
+               if($.inArray(v[1],array)>-1){
+                   var obj={
+                   };
+                   obj.code=v[1];
+                   obj.name=v[0];
+                   data.push(obj);
+               }
+           });
+            var that=this;
+            if(data.length){
+                $(data).each(function(k,v){
+                    that.getEstimate(v.code, v.name);
+                });
+            }
+        };
         this.getEstimate = function (fundcode, fundname) {
-
-            var results=[];
-
+            $("#table-estimate tbody .emptyrow").remove();
+            if( $("#table-estimate tbody tr").length==20){
+                $("#table-estimate tbody tr:last").remove();
+            }
+            var tds = [];
+            tds.push("<td>" + fundname + "(" + fundcode + ")</td>"); //基金
+            for (var j = 0; j < keys.length; j++) {
+                tds.push("<td data-key='" + keys[j] + "'>--</td>");
+            }
+            tds.push("<td><span><a href='javascript;'>删除</a></span></td>");
+            var tr = "<tr fundcode='" + fundcode + "'>" + tds.join("") + "</tr>";
+            $(tr).prependTo("#table-estimate tbody");
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                var parser = this.estimateParser[key];
+                if (parser) {
+                    parser(fundcode, fundname, ve.update);
+                }
+            }
         };
     };
     return new datasource();
 });
-define("viewEngine", function () {
-    var loading = "";
-    var viewEngine = function () {
 
-        this.update = function (data, table) {
-
+define("localdata", function () {
+    var maxLenth = 20; //只能添加20个
+    var localdata = function () {
+        var cookieKey = "estimateCode";
+        this.exist = function (fundcode) {
+            var cookie = $.cookie(cookieKey);
+            if (!cookie) return false;
+            return cookie.indexOf(fundcode) > -1;
         };
-        this.updateAll = function () {
-
+        this.set = function (fundcode) {
+            var cookie = $.cookie(cookieKey);
+            if (!cookie) {
+                $.cookie(cookieKey, fundcode);
+            } else {
+                var codes = cookie.split(",");
+                if ($.inArray(fundcode, codes) > -1) {
+                    return false;
+                }
+                if (codes.length == maxLenth) {
+                    codes.pop();
+                }
+                codes.unshift(fundcode);
+                $.cookie(cookieKey, codes.join(","));
+            }
         };
+        this.getAll = function () {
+            var cookie = $.cookie(cookieKey);
+            if (!cookie) return null;
+            return cookie.split(",");
+        }
     };
-    return new viewEngine();
+    return new localdata();
 });
 define("main", function (require) {
     require('cookie/1.0.0/cookie');
@@ -115,16 +230,27 @@ define("main", function (require) {
 
     Index.prototype = {
         constructor: Index,
+        loadTable: function () {
+            var local = require("localdata");
+            var ds = require("datasource");
+            var codes = local.getAll();
+            ds.getEstimateList(codes);
+        },
         updateTable: function (fundcode, fundname) {
-            var $tbNetValue = $("#table-netvalue");
-            var $tbEstimate = $("#table-estimate");
-            var ve = require("viewEngine");
+            var local = require("localdata");
+            if (local.exist(fundcode)) {
+                dialog.alert("基金:" + fundcode + "已经存在!", "warn", null, function () {
+                });
+                return false;
+            }
+            local.set(fundcode);
+            //var $tbNetValue = $("#table-netvalue");
+
             var ds = require("datasource");
             if (fundcode && fundname) {
-                var netvalue = ds.getNetValue(fundcode, fundname);
-                var estimate = ds.getEstimate(fundcode, fundname);
-                ve.update(netvalue, $tbNetValue);
-                ve.update(estimate, $tbEstimate);
+                // var netvalue = ds.getNetValue(fundcode, fundname);
+                ds.getEstimate(fundcode, fundname);
+                //ve.update(netvalue, $tbNetValue);
             } else {
                 ve.updateAll();
             }
@@ -151,7 +277,6 @@ define("main", function (require) {
                     if (code) {
                         var fundname = $.trim($fund.val());
                         $fund.attr("fundcode", code).attr("fundname", fundname);
-                        that.updateTable(code, fundname);
                     }
                 },
                 clickBtnId: "null"
@@ -161,6 +286,9 @@ define("main", function (require) {
                 var name = $fund.attr("fundname");
                 if (code && name) {
                     that.updateTable(code, name);
+                    $fund.removeAttr("fundcode");
+                    $fund.removeAttr("fundname");
+                    $fund.val("");
                 }
                 else {
                     dialog.alert("请先选择一只基金!", "warn", null, function () {
@@ -169,15 +297,15 @@ define("main", function (require) {
                 }
             });
             $("#btnRefresh").on("click", function () {
-                that.updateTable();
+                window.location.reload(true);
             });
         },
         init: function () {
             this.controlPanel();
-            var that = this;
-            setInterval(function () {
-                that.updateTable();
-            }, 30 * 1000);
+            this.loadTable();
+           setInterval(function () {
+               window.location.reload(true);
+            }, 30* 1000);
         }
     };
     return new Index();
