@@ -14,7 +14,8 @@ define("utils", function () {
     };
     return new Utils();
 });
-define("dataAccess", function () {
+define("dataAccess", function (require) {
+    var view=require("view");
     var maxLenth = 20; //只能添加20个
     var DataAccess = function () {
         var cookieConfig = {
@@ -45,7 +46,7 @@ define("dataAccess", function () {
             }
         };
         this.clearAll = function () {
-            $.cookie(cookieKey, "");
+            $.cookie(cookieKey, "",cookieConfig);
         };
         this.getAll = function () {
             var cookie = $.cookie(cookieKey);
@@ -62,15 +63,18 @@ define("dataAccess", function () {
                         codes = local.split(",");
                     }
                     $(res).each(function (index, item) {
-                        if (codes.length < 20) {
-                            codes.unshift(item.Code);
-                        } else {
-                            codes.unshift(item.Code);
-                            codes.pop();
+                        if($.inArray(item.Code,codes)<0){
+                            if (codes.length < 20 ) {
+                                codes.unshift(item.Code);
+                            } else {
+                                codes.unshift(item.Code);
+                                codes.pop();
+                            }
                         }
                     });
+                    view.clearAll();
                     callback(codes);
-                    $.cookie(cookieKey, codes.join(","), cookiecConfig);
+                    $.cookie(cookieKey, codes.join(","), cookieConfig);
                 }
             });
         };
@@ -267,7 +271,6 @@ define("main", function (require) {
             if (!codes || !codes.length) {
                 $("#table-estimate").find("tbody tr:first td").html("您还没有添加基金!");
             } else {
-                console.log(codes);
                 controller.getEstimateList(codes);
             }
         },
