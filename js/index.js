@@ -17,6 +17,11 @@ define("utils", function () {
 define("dataAccess", function () {
     var maxLenth = 20; //只能添加20个
     var DataAccess = function () {
+        var cookieConfig = {
+            domain: ".fund123.cn",
+            expires: 30,
+            path: "/"
+        };
         var cookieKey = "estimateCode";
         this.exist = function (fundcode) {
             var cookie = $.cookie(cookieKey);
@@ -26,7 +31,7 @@ define("dataAccess", function () {
         this.set = function (fundcode) {
             var cookie = $.cookie(cookieKey);
             if (!cookie) {
-                $.cookie(cookieKey, fundcode);
+                $.cookie(cookieKey, fundcode, cookieConfig);
             } else {
                 var codes = cookie.split(",");
                 if ($.inArray(fundcode, codes) > -1) {
@@ -36,7 +41,7 @@ define("dataAccess", function () {
                     codes.pop();
                 }
                 codes.unshift(fundcode);
-                $.cookie(cookieKey, codes.join(","));
+                $.cookie(cookieKey, codes.join(","), cookieConfig);
             }
         };
         this.clearAll = function () {
@@ -65,7 +70,7 @@ define("dataAccess", function () {
                         }
                     });
                     callback(codes);
-                    $.cookie(cookieKey, codes.join(","));
+                    $.cookie(cookieKey, codes.join(","), cookiecConfig);
                 }
             });
         };
@@ -269,7 +274,8 @@ define("main", function (require) {
 
         updateTable: function (fundcode, fundname) {
             if (db.exist(fundcode)) {
-                dialog.alert("基金:" + fundcode + "已经存在!", "warn", null, function () { });
+                dialog.alert("基金:" + fundcode + "已经存在!", "warn", null, function () {
+                });
                 return false;
             }
             db.set(fundcode);
@@ -325,7 +331,9 @@ define("main", function (require) {
                 dialog.confirm("本地数据将被删除，确定执行吗?", function () {
                     controller.clearAll();
                     db.clearAll();
-                }, function () { return true; });
+                }, function () {
+                    return true;
+                });
             });
             $("#btnLoadFromShumi").on('click', function () {
                 var domain = window.location.host;
