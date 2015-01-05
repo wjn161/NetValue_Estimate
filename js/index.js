@@ -178,14 +178,15 @@ define("controller", function (require) {
             },
             ifund: function (fundcode, fundname, update) {
                 request("ifund", "jsonp", fundcode, false, function (res) {
-                    if (res && res.message && res.data.length) {
+                    if (res && res.data) {
                         var estimate = {};
+                        var obj=res.data[fundcode];
+                        console.log(obj);
                         estimate.key = "ifund";
-                        //                        estimate.fundCode = fundcode;
-                        //                        estimate.fundName = fundname;
-                        //                        estimate.value = res.gsz;
-                        //                        estimate.percent = res.gszzl + "%";
-                        //                        estimate.time = res.gztime;
+                        estimate.fundCode = fundcode;
+                        estimate.fundName = fundname;
+                        estimate.value= Number(obj.value).toFixed(4);
+                        estimate.percent=(((Number(obj.value)-Number(obj.pre))/Number(obj.pre))*100).toFixed(2)+"%";
                         update(estimate);
                     }
                 });
