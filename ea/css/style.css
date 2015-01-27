@@ -1,0 +1,61 @@
+body{
+    font-family: "microsoft yahei","sans-serif";
+}
+.margin-top{
+    height: 80px;
+}
+.current-row{
+ background-color: #dd4814;
+    color: #fff;
+}
+.main-content table tbody tr td.align-left{
+    padding-left: 20px;
+    text-align: left;
+}
+.control-panel-title{
+    font-size: 16px;
+    color: #dd4814;
+    font-weight: bold;
+}
+.control-panel{
+    margin-top: 10px;
+    height: 100%;
+    border: 1px solid #ccc;
+}
+.control-panel .control-panel-content{
+    padding: 10px;
+}
+.main-content{
+   height: 100%;
+   overflow: hidden;
+}
+.main-content table caption{
+    font-size: 16px;
+    color: #dd4814;
+    font-weight: bold;
+}
+.main-content table tr th{
+    text-align: center;
+}
+.main-content table tbody tr:nth-child(even){
+    background-color: #eee;
+}
+.main-content table tr td,.main-content table tr th{
+    text-align: center;
+    font-family: 'Microsoft YaHei';
+}
+.typeahead-widthfixed{
+    width: 210px;
+    overflow: hidden;
+}
+.main-content p{
+    padding: 0;
+    text-indent: 2em;
+}
+.footer{
+    border-top: 1px solid #dd4814;
+    margin-top: 50px;
+    height: 100px;
+    padding: 40px 0;
+    text-align: center;
+}
